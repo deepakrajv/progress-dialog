@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">ProgressDialog</string>
+    <string name="loading">Loading…</string>
+    <string name="loading_progress">%1$d%%</string>
+</resources>
