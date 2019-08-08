@@ -15,16 +15,14 @@ class MainActivity : AppCompatActivity() {
         showProgressBar(null)
     }
 
-    fun showProgressBar(view: View?) {
+    fun showProgressBar(@Suppress("UNUSED_PARAMETER") view: View?) {
         val progressDialog = ProgressDialog(this)
-        progressDialog.showProgressDialog()
         progressDialog.showProgressValue(true)
-        //progressDialog?.showProgressDialog()
-        //progressDialog.incrementProgressBy(50)
-        //if (newProgress == 100) progressDialog?.dismissProgressDialog()
         progressDialog.setProgressColor(R.color.colorPrimary)
         progressDialog.setMessage("Downloading....")
-        //progressDialog.showProgressValue(false)
+        progressDialog.showMessageText(true)
+        progressDialog.setProgressType(ProgressDialog.HUD)
+        progressDialog.setIndeterminate(false)
         progressDialog.incrementProgressBy(50)
         val handler = Handler()
         var progress = 0
