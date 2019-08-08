@@ -10,6 +10,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
+import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.core.content.ContextCompat
 import androidx.core.widget.ContentLoadingProgressBar
 import org.jetbrains.annotations.NotNull
@@ -31,6 +32,8 @@ class ProgressDialog(@NotNull context: Context?) : View(context) {
     private var imageView: AppCompatImageView? = null
     private var progressBarType = HORIZONTAL
     private var indeterminate = false
+    private var parentHUDBackground: LinearLayoutCompat? = null
+    private var parentHorizontalBackground: LinearLayoutCompat? = null
 
 
     init {
@@ -43,12 +46,14 @@ class ProgressDialog(@NotNull context: Context?) : View(context) {
         val value = outValue.resourceId*/
         builder = AlertDialog.Builder(context!!/*,value*/)
         val dialogView: View = (context as AppCompatActivity).layoutInflater.inflate(R.layout.progress_dialog, null)
+        parentHUDBackground = dialogView.findViewById(R.id.parent_hud_ll)
+        parentHorizontalBackground = dialogView.findViewById(R.id.parent_horizontal_ll)
         message = dialogView.findViewById(R.id.message)
         progressBar = dialogView.findViewById(R.id.progress_bar)
         progressText = dialogView.findViewById(R.id.progress_text)
         progressBar?.isIndeterminate = indeterminate
         progressBar?.max = 100
-        imageView = dialogView.findViewById<AppCompatImageView>(R.id.spinnerImageView)
+        imageView = dialogView.findViewById<AppCompatImageView>(R.id.spinner_iv)
         val spinner = imageView?.background as AnimationDrawable
         spinner.start()
         message?.text = resources.getText(R.string.loading)
@@ -61,14 +66,15 @@ class ProgressDialog(@NotNull context: Context?) : View(context) {
     fun showProgressDialog() {
         if (!dialog!!.isShowing) {
             if (progressBarType == HORIZONTAL) {
-                imageView?.visibility = GONE
-                progressBar?.visibility = VISIBLE
+                parentHorizontalBackground?.visibility = VISIBLE
+                parentHUDBackground?.visibility = GONE
             } else if (progressBarType == HUD) {
-                imageView?.visibility = VISIBLE
-                progressBar?.visibility = GONE
-                dialog?.window?.setBackgroundDrawableResource(android.R.color.transparent)
+                parentHorizontalBackground?.visibility = GONE
+                parentHUDBackground?.visibility = VISIBLE
                 showProgressValue(false)
                 showMessageText(false)
+                dialog?.window?.setBackgroundDrawableResource(android.R.color.transparent)
+
             }
             showProgressValue(showProgressText)
             dialog?.show()
@@ -110,6 +116,10 @@ class ProgressDialog(@NotNull context: Context?) : View(context) {
                 Log.e("ResourceNotFound", e.message)
             }
         }
+    }
+
+    fun setDialogBackgroundColor(@NotNull color: Int) {
+        parentHUDBackground?.setBackgroundColor(ContextCompat.getColor(context, color))
     }
 
 
@@ -174,7 +184,7 @@ class ProgressDialog(@NotNull context: Context?) : View(context) {
 
     fun showMessageText(show: Boolean) {
         showMessageText = show
-            message?.visibility = if (show) VISIBLE else GONE
+        message?.visibility = if (show) VISIBLE else GONE
 
     }
 
